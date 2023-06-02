@@ -9,11 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>ru.pracricum</groupId>
     <artifactId>stat-dto</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>stat-dto</name>
+    <description>stat-dto</description>
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
         </dependency>
     </dependencies>
 
