@@ -29,8 +29,7 @@ public class StatServiceImpl implements StatService {
                 return repository.statForAllUriUniqueIp(start, end);
             else
                 return repository.statForAllUri(start, end);
-        }
-        else {
+        } else {
             if (unique)
                 return repository.statForSpecificUrisUniqueIp(start, end, uris);
             else
