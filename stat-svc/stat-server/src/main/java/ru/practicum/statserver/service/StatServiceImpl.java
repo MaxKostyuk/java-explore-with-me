@@ -1,6 +1,7 @@
 package ru.practicum.statserver.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.statserver.mapper.StatMapper;
 import ru.practicum.statserver.repository.StatRecordRepository;
@@ -24,16 +25,17 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public List<StatViewDto> getStatistics(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
+        Sort sort = Sort.by("hits").descending();
         if (Objects.isNull(uris)) {
             if (unique)
-                return repository.statForAllUriUniqueIp(start, end);
+                return repository.statForAllUriUniqueIp(start, end, sort);
             else
-                return repository.statForAllUri(start, end);
+                return repository.statForAllUri(start, end, sort);
         } else {
             if (unique)
-                return repository.statForSpecificUrisUniqueIp(start, end, uris);
+                return repository.statForSpecificUrisUniqueIp(start, end, uris, sort);
             else
-                return repository.statForSpecificUris(start, end, uris);
+                return repository.statForSpecificUris(start, end, uris, sort);
         }
     }
 }
