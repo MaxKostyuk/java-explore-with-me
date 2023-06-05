@@ -1,6 +1,6 @@
-package ru.pracricum.statserver.model;
+package ru.practicum.statserver.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

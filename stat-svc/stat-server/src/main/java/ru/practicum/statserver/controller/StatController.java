@@ -1,10 +1,9 @@
-package ru.pracricum.statserver.controller;
+package ru.practicum.statserver.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.pracricum.statserver.service.StatService;
+import ru.practicum.statserver.service.StatService;
 import ru.practicum.statdto.StatHitDto;
 import ru.practicum.statdto.StatViewDto;
 
@@ -25,10 +24,10 @@ public class StatController {
     }
 
     @GetMapping("/stats")
-    public List<StatViewDto> getStatistics(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+    public List<StatViewDto> getStatistics(@RequestParam LocalDateTime start,
+                                           @RequestParam LocalDateTime end,
                                            @RequestParam(required = false) String[] uris,
-                                           @RequestParam(required = false) boolean unique) {
+                                           @RequestParam(required = false, defaultValue = "false") boolean unique) {
         //логгируем?
         return service.getStatistics(start, end, uris, unique);
     }

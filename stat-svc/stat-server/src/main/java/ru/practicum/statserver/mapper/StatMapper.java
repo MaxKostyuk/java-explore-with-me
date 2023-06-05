@@ -1,6 +1,6 @@
-package ru.pracricum.statserver.mapper;
+package ru.practicum.statserver.mapper;
 
-import ru.pracricum.statserver.model.StatRecord;
+import ru.practicum.statserver.model.StatRecord;
 import ru.practicum.statdto.StatHitDto;
 
 public class StatMapper {
