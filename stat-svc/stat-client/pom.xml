@@ -10,15 +10,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>stat-client</artifactId>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot</artifactId>
         </dependency>
+
         <dependency>
             <groupId>ru.practicum</groupId>
             <artifactId>stat-dto</artifactId>
@@ -28,8 +31,8 @@
     </dependencies>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
 </project>
