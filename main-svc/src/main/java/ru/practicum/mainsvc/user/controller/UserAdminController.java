@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainsvc.user.dto.NewUserRequest;
 import ru.practicum.mainsvc.user.dto.UserDto;
+import ru.practicum.mainsvc.user.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
