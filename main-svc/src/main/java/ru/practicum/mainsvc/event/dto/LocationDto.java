@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Location {
+public class LocationDto {
     @NotNull
     @Min(value = -90, message = "Latitude must be more than -90 degrees")
     @Max(value = 90, message = "Latitude must be less than 90 degrees")
