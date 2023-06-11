@@ -7,7 +7,7 @@ import ru.practicum.mainsvc.user.model.User;
 import java.util.Collection;
 import java.util.List;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
 
     List<User> findAllByIdIn(Collection<Long> ids, Pageable page);
 }
