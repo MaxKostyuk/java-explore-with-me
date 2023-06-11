@@ -19,18 +19,29 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
-    private User user;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User initiator;
+    @Column(nullable = false)
     private String annotation;
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+    @Column(name = "created_on", nullable = false)
+    private LocalDateTime createdOn;
+    @Column(nullable = false)
     private String description;
+    @Column(name = "event_date", nullable = false)
     private LocalDateTime eventDate;
     @Embedded
     private Location location;
+    @Column(nullable = false)
     private Boolean paid;
+    @Column(name = "participant_limit", nullable = false)
     private Integer participantLimit;
+    @Column(name = "published_on")
+    private LocalDateTime publishedOn;
+    @Column(name = "request_moderation", nullable = false)
     private Boolean requestModeration;
+    @Column(nullable = false)
     private String title;
 }
