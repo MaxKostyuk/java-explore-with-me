@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS events
     participant_limit  INTEGER   NOT NULL,
     published_on       TIMESTAMP,
     request_moderation BOOLEAN   NOT NULL,
+    state              VARCHAR   NOT NULL,
     title              VARCHAR   NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (initiator) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_category FOREIGN KEY (category) REFERENCES categories (id)

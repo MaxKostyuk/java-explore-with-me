@@ -1,6 +1,7 @@
 package ru.practicum.mainsvc.event.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.mainsvc.category.dto.CategoryDto;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class EventFullDto {
     private Long id;
     private UserShortDto initiator;
