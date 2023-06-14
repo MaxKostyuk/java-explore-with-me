@@ -3,8 +3,13 @@ package ru.practicum.mainsvc.event.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.mainsvc.event.validation.Future2HoursMin;
 
-import javax.validation.constraints.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -21,11 +26,13 @@ public class NewEventDto {
     @Size(min = 20, max = 7000, message = "Description length must be between 20 and 7000 characters")
     private String description;
     @NotNull
-    @Future
+    @Future2HoursMin
     private LocalDateTime eventDate;
     @NotNull
+    @Valid
     private LocationDto location;
     private Boolean paid = false;
+    @Positive
     private Integer participantLimit = 0;
     private Boolean requestModeration = true;
     @NotBlank
