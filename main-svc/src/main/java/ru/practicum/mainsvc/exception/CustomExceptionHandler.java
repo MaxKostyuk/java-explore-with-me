@@ -35,6 +35,13 @@ public class CustomExceptionHandler {
         return getApiError(HttpStatus.CONFLICT, "Integrity constraint has been violated.", e);
     }
 
+    @ExceptionHandler(ActionForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ApiError actionForbiddenExceptionHandler(ActionForbiddenException e) {
+        return getApiError(HttpStatus.FORBIDDEN, "For the requested operation the conditions are not met.", e);
+    }
+
     private ApiError getApiError(HttpStatus status, String reason, Exception e) {
         return new ApiError(status.getReasonPhrase(), reason, e.getMessage(), LocalDateTime.now());
     }
