@@ -48,4 +48,6 @@ public class EventPrivateController {
         return service.updateEvent(eventId, userId, newEvent);
     }
 
+    //тут надо добавить 2 метода для работы с заявками на участие
+
 }

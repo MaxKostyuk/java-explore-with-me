@@ -1,9 +1,8 @@
 package ru.practicum.mainsvc.event.service;
 
-import ru.practicum.mainsvc.event.dto.EventFullDto;
-import ru.practicum.mainsvc.event.dto.NewEventDto;
-import ru.practicum.mainsvc.event.dto.UpdateEventUserRequest;
+import ru.practicum.mainsvc.event.dto.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -15,4 +14,8 @@ public interface EventService {
     EventFullDto getEventById(Long eventId);
 
     EventFullDto updateEvent(Long eventId, Long userId, UpdateEventUserRequest newEvent);
+
+    List<EventFullDto> adminSearchEvents(Long[] users, EventState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
+
+    EventFullDto adminUpdateEvent(Long eventId, UpdateEventAdminRequest eventRequest);
 }
