@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class UpdateEventUserRequest extends UpdateEventAbstractRequest {
-    private UserStateAction stateAction;
+public class UpdateEventAdminRequest extends UpdateEventAbstractRequest {
+    AdminStateAction stateAction;
 }
