@@ -8,6 +8,7 @@ import ru.practicum.mainsvc.event.validation.NotBlankNullable;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -28,7 +29,7 @@ public class UpdateEventUserRequest {
     @Valid
     private LocationDto location;
     private Boolean paid;
-    @Positive
+    @PositiveOrZero
     private Integer participantLimit;
     private Boolean requestModeration;
     private StateAction stateAction;

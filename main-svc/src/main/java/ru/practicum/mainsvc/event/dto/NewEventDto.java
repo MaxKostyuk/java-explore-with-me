@@ -6,10 +6,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.mainsvc.event.validation.Future2HoursMin;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -32,7 +29,7 @@ public class NewEventDto {
     @Valid
     private LocationDto location;
     private Boolean paid = false;
-    @Positive
+    @PositiveOrZero
     private Integer participantLimit = 0;
     private Boolean requestModeration = true;
     @NotBlank
