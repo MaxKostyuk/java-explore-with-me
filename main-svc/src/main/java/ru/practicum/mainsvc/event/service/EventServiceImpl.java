@@ -13,6 +13,7 @@ import ru.practicum.mainsvc.event.mapper.LocationMapper;
 import ru.practicum.mainsvc.event.model.Event;
 import ru.practicum.mainsvc.event.repository.EventRepository;
 import ru.practicum.mainsvc.exception.ActionForbiddenException;
+import ru.practicum.mainsvc.exception.ElementNotFoundException;
 import ru.practicum.mainsvc.user.model.User;
 import ru.practicum.mainsvc.user.repository.UserRepository;
 
@@ -100,6 +101,28 @@ public class EventServiceImpl implements EventService {
         }
         //опять же ставим тут данные по просмотрам и подтвержденным заявкам
         return EventMapper.toEventFullDto(eventRepository.save(event));
+    }
+
+    @Override
+    public List<EventFullDto> publicSearch(String text, Long[] categories, Boolean paid, LocalDateTime rangeStart,
+                                           LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size) {
+        //для каждого события отправить плюс в статистику
+        if (rangeStart == null & rangeEnd == null)
+            rangeStart = LocalDateTime.now(); //надо убедиться, что этот иммьютабл нормально подменяется, если что
+        return eventRepository.publicSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
+                        PageRequest.of(from, size, Sort.by("id")))
+                .stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
+        //пока не хватает еще соритровки
+    }
+
+    @Override
+    public EventFullDto publicGetById(Long eventId) {
+        Event event = eventRepository.getEventById(eventId);
+        if (event.getState() != EventState.PUBLISHED)
+            throw new ElementNotFoundException("Event with id " + eventId + " not found");
+        //и что в статистику отправляется плюс
+        //ну и по традиции подставить views
+        return EventMapper.toEventFullDto(event);
     }
 
     private void updateEventFields(UpdateEventAbstractRequest newEvent, Event event) {
