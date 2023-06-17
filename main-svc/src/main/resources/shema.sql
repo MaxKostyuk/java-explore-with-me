@@ -31,3 +31,14 @@ CREATE TABLE IF NOT EXISTS events
     CONSTRAINT fk_user FOREIGN KEY (initiator) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_category FOREIGN KEY (category) REFERENCES categories (id)
 );
+
+CREATE TABLE IF NOT EXISTS requests
+(
+    id        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    event     BIGINT    NOT NULL,
+    requester BIGINT    NOT NULL,
+    created   TIMESTAMP NOT NULL,
+    status    VARCHAR   NOT NULL,
+    CONSTRAINT fk_event FOREIGN KEY (event) REFERENCES events (id) ON DELETE CASCADE,
+    CONSTRAINT fk_users FOREIGN KEY (requester) REFERENCES users (id) ON DELETE CASCADE
+);
