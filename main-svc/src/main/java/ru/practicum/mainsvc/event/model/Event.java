@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 import ru.practicum.mainsvc.category.model.Category;
 import ru.practicum.mainsvc.event.dto.EventState;
 import ru.practicum.mainsvc.user.model.User;
@@ -50,4 +51,6 @@ public class Event {
     private EventState state;
     @Column(nullable = false)
     private String title;
+    @Formula("select count(*) from requests req where req.event = id and req.status like 'CONFIRMED'")
+    private Integer confirmedRequests;
 }
