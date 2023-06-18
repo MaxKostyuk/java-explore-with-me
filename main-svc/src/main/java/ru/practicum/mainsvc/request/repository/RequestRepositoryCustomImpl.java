@@ -17,4 +17,9 @@ public class RequestRepositoryCustomImpl implements RequestRepositoryCustom {
         return repository.findById(requestId)
                 .orElseThrow(() -> new ElementNotFoundException(String.format(REQUEST_NOT_FOUND_TEMPLATE, requestId)));
     }
+
+    @Override
+    public boolean requestAlreadyExists(Long userId, Long eventId) {
+        return repository.findByRequesterIdAndEventId(userId, eventId).isPresent();
+    }
 }
