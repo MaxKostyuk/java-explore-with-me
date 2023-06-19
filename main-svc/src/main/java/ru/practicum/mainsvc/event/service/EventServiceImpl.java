@@ -1,6 +1,7 @@
 package ru.practicum.mainsvc.event.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,11 +15,19 @@ import ru.practicum.mainsvc.event.model.Event;
 import ru.practicum.mainsvc.event.repository.EventRepository;
 import ru.practicum.mainsvc.exception.ActionForbiddenException;
 import ru.practicum.mainsvc.exception.ElementNotFoundException;
+import ru.practicum.mainsvc.request.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.mainsvc.request.dto.EventRequestStatusUpdateResult;
+import ru.practicum.mainsvc.request.dto.ParticipationRequestDto;
+import ru.practicum.mainsvc.request.dto.RequestStatus;
+import ru.practicum.mainsvc.request.mapper.RequestMapper;
+import ru.practicum.mainsvc.request.model.ParticipationRequest;
+import ru.practicum.mainsvc.request.repository.RequestRepository;
 import ru.practicum.mainsvc.user.model.User;
 import ru.practicum.mainsvc.user.repository.UserRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -30,6 +39,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public EventFullDto addEvent(NewEventDto newEvent, Long userId) {
@@ -123,6 +133,55 @@ public class EventServiceImpl implements EventService {
         //и что в статистику отправляется плюс
         //ну и по традиции подставить views
         return EventMapper.toEventFullDto(event);
+    }
+
+    @Override
+    public List<ParticipationRequestDto> getEventsRequests(Long userId, Long eventId) {
+        userRepository.getUserById(userId);
+        Event event = eventRepository.getEventById(eventId);
+        if (!event.getInitiator().getId().equals(userId))
+            throw new ActionForbiddenException("Only initiator may get event participation requests");
+        return requestRepository.findAllByEventId(eventId)
+                .stream().map(RequestMapper::toRequestDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventRequestStatusUpdateResult updateParticipationRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest updateRequest) {
+        userRepository.getUserById(userId);
+        Event event = eventRepository.getEventById(eventId);
+        if (!event.getInitiator().getId().equals(userId))
+            throw new ActionForbiddenException("Only initiator may moderate event participation requests");
+        if (!event.getRequestModeration() | event.getParticipantLimit().equals(0))
+            throw new ActionForbiddenException("This event need no participation request moderation");
+
+        List<ParticipationRequest> requestsToUpdate = requestRepository.findAllById(updateRequest.getRequestIds());
+        List<ParticipationRequest> confirmedRequests = new ArrayList<>();
+        List<ParticipationRequest> rejectedRequests = new ArrayList<>();
+        int availableSlots = event.getParticipantLimit() - event.getConfirmedRequests();
+
+        for (ParticipationRequest request : requestsToUpdate) {
+            if (!request.getEvent().getId().equals(eventId))
+                throw new ActionForbiddenException("You are moderating a request of other event");
+            if (request.getStatus() != RequestStatus.PENDING)
+                throw new DataIntegrityViolationException("Only pending participation requests are allowed to moderate");
+            if (updateRequest.getStatus() == RequestStatus.CONFIRMED && availableSlots > 0) {
+                request.setStatus(RequestStatus.CONFIRMED);
+                confirmedRequests.add(request);
+                availableSlots--;
+            } else {
+                request.setStatus(RequestStatus.REJECTED);
+                rejectedRequests.add(request);
+            }
+        }
+        requestRepository.saveAll(requestsToUpdate);
+
+        EventRequestStatusUpdateResult moderationResult = new EventRequestStatusUpdateResult();
+        moderationResult.setConfirmedRequests(confirmedRequests.stream()
+                .map(RequestMapper::toRequestDto).collect(Collectors.toList()));
+        moderationResult.setRejectedRequests(rejectedRequests.stream()
+                .map(RequestMapper::toRequestDto).collect(Collectors.toList()));
+
+        return moderationResult;
     }
 
     private void updateEventFields(UpdateEventAbstractRequest newEvent, Event event) {
