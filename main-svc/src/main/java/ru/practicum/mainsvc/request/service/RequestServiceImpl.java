@@ -52,7 +52,7 @@ public class RequestServiceImpl implements RequestService {
                 .created(LocalDateTime.now())
                 .status(RequestStatus.PENDING)
                 .build();
-        if (!event.getRequestModeration())
+        if (!event.getRequestModeration() | event.getParticipantLimit().equals(0))
             request.setStatus(RequestStatus.CONFIRMED);
         return RequestMapper.toRequestDto(requestRepository.save(request));
     }
