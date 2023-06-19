@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.mainsvc.event.model.Event;
-import ru.practicum.mainsvc.request.dto.RequestStatus;
+import ru.practicum.mainsvc.request.enums.RequestStatus;
 import ru.practicum.mainsvc.user.model.User;
 
 import javax.persistence.*;
