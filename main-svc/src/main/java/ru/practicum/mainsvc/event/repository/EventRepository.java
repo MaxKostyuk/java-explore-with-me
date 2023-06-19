@@ -4,7 +4,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.practicum.mainsvc.event.dto.EventState;
+import ru.practicum.mainsvc.event.enums.EventState;
 import ru.practicum.mainsvc.event.model.Event;
 
 import java.time.LocalDateTime;

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Formula;
 import ru.practicum.mainsvc.category.model.Category;
-import ru.practicum.mainsvc.event.dto.EventState;
+import ru.practicum.mainsvc.event.enums.EventState;
 import ru.practicum.mainsvc.user.model.User;
 
 import javax.persistence.*;

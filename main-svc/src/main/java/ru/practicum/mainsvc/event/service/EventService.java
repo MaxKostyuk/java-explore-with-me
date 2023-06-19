@@ -1,6 +1,8 @@
 package ru.practicum.mainsvc.event.service;
 
 import ru.practicum.mainsvc.event.dto.*;
+import ru.practicum.mainsvc.event.enums.EventSearchSort;
+import ru.practicum.mainsvc.event.enums.EventState;
 import ru.practicum.mainsvc.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.mainsvc.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.mainsvc.request.dto.ParticipationRequestDto;
@@ -23,8 +25,8 @@ public interface EventService {
 
     EventFullDto adminUpdateEvent(Long eventId, UpdateEventAdminRequest eventRequest);
 
-    List<EventFullDto> publicSearch(String text, Long[] categories, Boolean paid, LocalDateTime rangeStart,
-                                    LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size);
+    List<EventShortDto> publicSearch(String text, Long[] categories, Boolean paid, LocalDateTime rangeStart,
+                                     LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size);
 
     EventFullDto publicGetById(Long eventId);
 

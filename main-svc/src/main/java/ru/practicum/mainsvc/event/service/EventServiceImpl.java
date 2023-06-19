@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 import ru.practicum.mainsvc.category.model.Category;
 import ru.practicum.mainsvc.category.repository.CategoryRepository;
 import ru.practicum.mainsvc.event.dto.*;
+import ru.practicum.mainsvc.event.enums.AdminStateAction;
+import ru.practicum.mainsvc.event.enums.EventSearchSort;
+import ru.practicum.mainsvc.event.enums.EventState;
+import ru.practicum.mainsvc.event.enums.UserStateAction;
 import ru.practicum.mainsvc.event.mapper.EventMapper;
 import ru.practicum.mainsvc.event.mapper.LocationMapper;
 import ru.practicum.mainsvc.event.model.Event;
@@ -18,7 +22,7 @@ import ru.practicum.mainsvc.exception.ElementNotFoundException;
 import ru.practicum.mainsvc.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.mainsvc.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.mainsvc.request.dto.ParticipationRequestDto;
-import ru.practicum.mainsvc.request.dto.RequestStatus;
+import ru.practicum.mainsvc.request.enums.RequestStatus;
 import ru.practicum.mainsvc.request.mapper.RequestMapper;
 import ru.practicum.mainsvc.request.model.ParticipationRequest;
 import ru.practicum.mainsvc.request.repository.RequestRepository;
@@ -114,14 +118,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventFullDto> publicSearch(String text, Long[] categories, Boolean paid, LocalDateTime rangeStart,
-                                           LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size) {
+    public List<EventShortDto> publicSearch(String text, Long[] categories, Boolean paid, LocalDateTime rangeStart,
+                                            LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size) {
         //для каждого события отправить плюс в статистику
         if (rangeStart == null & rangeEnd == null)
             rangeStart = LocalDateTime.now(); //надо убедиться, что этот иммьютабл нормально подменяется, если что
         return eventRepository.publicSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                         PageRequest.of(from, size, Sort.by("id")))
-                .stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
+                .stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
         //пока не хватает еще соритровки
     }
 

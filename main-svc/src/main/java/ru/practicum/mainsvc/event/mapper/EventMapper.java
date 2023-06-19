@@ -2,6 +2,7 @@ package ru.practicum.mainsvc.event.mapper;
 
 import ru.practicum.mainsvc.category.mapper.CategoryMapper;
 import ru.practicum.mainsvc.event.dto.EventFullDto;
+import ru.practicum.mainsvc.event.dto.EventShortDto;
 import ru.practicum.mainsvc.event.dto.NewEventDto;
 import ru.practicum.mainsvc.event.model.Event;
 import ru.practicum.mainsvc.user.mapper.UserMapper;
@@ -36,6 +37,19 @@ public class EventMapper {
                 .publishedOn(event.getPublishedOn())
                 .requestModeration(event.getRequestModeration())
                 .state(event.getState())
+                .title(event.getTitle())
+                .build();
+    }
+
+    public static EventShortDto toEventShortDto(Event event) {
+        return EventShortDto.builder()
+                .annotation(event.getAnnotation())
+                .category(CategoryMapper.toCategoryDto(event.getCategory()))
+                .confirmedRequests(event.getConfirmedRequests())
+                .eventDate(event.getEventDate())
+                .id(event.getId())
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
+                .paid(event.getPaid())
                 .title(event.getTitle())
                 .build();
     }
