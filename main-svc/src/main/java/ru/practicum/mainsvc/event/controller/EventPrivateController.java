@@ -2,16 +2,22 @@ package ru.practicum.mainsvc.event.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainsvc.event.dto.EventFullDto;
 import ru.practicum.mainsvc.event.dto.NewEventDto;
 import ru.practicum.mainsvc.event.dto.UpdateEventUserRequest;
 import ru.practicum.mainsvc.event.service.EventService;
+import ru.practicum.mainsvc.request.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.mainsvc.request.dto.EventRequestStatusUpdateResult;
+import ru.practicum.mainsvc.request.dto.ParticipationRequestDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users/{userId}/events")
@@ -27,14 +33,14 @@ public class EventPrivateController {
     }
 
     @GetMapping
-    public List<EventFullDto> getUsersEvents(@PathVariable Long userId,
-                                             @RequestParam(defaultValue = "0") Integer from,
-                                             @RequestParam(defaultValue = "10") Integer size) {
+    public List<EventFullDto> getUsersEvents(@PathVariable @Positive Long userId,
+                                             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                             @RequestParam(defaultValue = "10") @Positive Integer size) {
         return service.getUsersEvents(userId, from, size);
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto getEvent(@PathVariable Long eventId) {
+    public EventFullDto getEvent(@PathVariable @Positive Long eventId) {
         return service.getEventById(eventId);
     }
 
@@ -48,6 +54,16 @@ public class EventPrivateController {
         return service.updateEvent(eventId, userId, newEvent);
     }
 
-    //тут надо добавить 2 метода для работы с заявками на участие
+    @GetMapping("/{eventId}/requests")
+    public List<ParticipationRequestDto> getEventsRequests(@PathVariable @Positive Long userId,
+                                                           @PathVariable @Positive Long eventId) {
+        return service.getEventsRequests(userId, eventId);
+    }
 
+    @PatchMapping("/{eventId}/requests")
+    public EventRequestStatusUpdateResult updateEventRequestsStatus(@PathVariable @Positive Long userId,
+                                                                    @PathVariable @Positive Long eventId,
+                                                                    @RequestBody @Valid EventRequestStatusUpdateRequest updateRequest) {
+        return service.updateParticipationRequests(userId, eventId, updateRequest);
+    }
 }
