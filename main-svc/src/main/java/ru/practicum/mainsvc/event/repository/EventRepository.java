@@ -29,8 +29,8 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
             "and (:categories is null or e.category in :categories) " +
             "and (:paid is null or e.paid = :paid) " +
             "and (:rangeStart is null or e.eventDate > :rangeStart) " +
-            "and (:rangeEnd is null or e.eventDate < :rangeEnd)")
-        //тут еще добавить строку про онли авейлабл
+            "and (:rangeEnd is null or e.eventDate < :rangeEnd) " +
+            "and (:onlyAvailable is null or e.confirmedRequests < e.participantLimit)")
     List<Event> publicSearch(String text, Long[] categories, Boolean paid,
                              LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, PageRequest id);
 }
