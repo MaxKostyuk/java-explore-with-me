@@ -51,6 +51,6 @@ public class Event {
     private EventState state;
     @Column(nullable = false)
     private String title;
-    @Formula("select count(*) from requests req where req.event = id and req.status like 'CONFIRMED'")
+    @Formula("(select count(req.id) from requests as req where req.event = id and req.status like 'CONFIRMED')")
     private Integer confirmedRequests;
 }
