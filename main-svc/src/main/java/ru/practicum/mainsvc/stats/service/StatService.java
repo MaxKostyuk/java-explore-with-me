@@ -29,7 +29,7 @@ public class StatService {
         return statViews.get(0).getHits();
     }
 
-    public void saveView(Long eventId, String ip) {
+    public void saveViews(Long eventId, String ip) {
         String uri = URI_BASE + eventId;
         StatHitDto statHitDto = new StatHitDto(null, APP_NAME, uri, ip, LocalDateTime.now());
         client.saveEndpointRequest(statHitDto);

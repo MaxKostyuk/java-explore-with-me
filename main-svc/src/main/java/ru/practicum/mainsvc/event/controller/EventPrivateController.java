@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainsvc.event.dto.EventFullDto;
+import ru.practicum.mainsvc.event.dto.EventShortDto;
 import ru.practicum.mainsvc.event.dto.NewEventDto;
 import ru.practicum.mainsvc.event.dto.UpdateEventUserRequest;
 import ru.practicum.mainsvc.event.service.EventService;
@@ -33,15 +34,16 @@ public class EventPrivateController {
     }
 
     @GetMapping
-    public List<EventFullDto> getUsersEvents(@PathVariable @Positive Long userId,
-                                             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
-                                             @RequestParam(defaultValue = "10") @Positive Integer size) {
+    public List<EventShortDto> getUsersEvents(@PathVariable @Positive Long userId,
+                                              @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                              @RequestParam(defaultValue = "10") @Positive Integer size) {
         return service.getUsersEvents(userId, from, size);
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto getEvent(@PathVariable @Positive Long eventId) {
-        return service.getEventById(eventId);
+    public EventFullDto getEvent(@PathVariable @Positive Long eventId,
+                                 @PathVariable @Positive Long userId) {
+        return service.getEventById(eventId, userId);
     }
 
     //добавить логгирование во все контроллеры!

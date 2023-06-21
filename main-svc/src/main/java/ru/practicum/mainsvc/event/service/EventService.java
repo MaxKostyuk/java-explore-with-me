@@ -14,9 +14,9 @@ public interface EventService {
 
     EventFullDto addEvent(NewEventDto newEvent, Long userId);
 
-    List<EventFullDto> getUsersEvents(Long userId, Integer from, Integer size);
+    List<EventShortDto> getUsersEvents(Long userId, Integer from, Integer size);
 
-    EventFullDto getEventById(Long eventId);
+    EventFullDto getEventById(Long eventId, Long userId);
 
     EventFullDto updateEvent(Long eventId, Long userId, UpdateEventUserRequest newEvent);
 
@@ -26,9 +26,9 @@ public interface EventService {
     EventFullDto adminUpdateEvent(Long eventId, UpdateEventAdminRequest eventRequest);
 
     List<EventShortDto> publicSearch(String text, Long[] categories, Boolean paid, LocalDateTime rangeStart,
-                                     LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size);
+                                     LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size, String ip);
 
-    EventFullDto publicGetById(Long eventId);
+    EventFullDto publicGetById(Long eventId, String ip);
 
     List<ParticipationRequestDto> getEventsRequests(Long userId, Long eventId);
 
