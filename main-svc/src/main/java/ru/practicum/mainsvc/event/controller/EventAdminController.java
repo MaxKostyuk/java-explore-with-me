@@ -1,6 +1,7 @@
 package ru.practicum.mainsvc.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainsvc.event.dto.EventFullDto;
 import ru.practicum.mainsvc.event.enums.EventState;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/events")
@@ -27,7 +29,6 @@ public class EventAdminController {
                                                 @RequestParam LocalDateTime rangeEnd,
                                                 @RequestParam(defaultValue = "0") Integer from,
                                                 @RequestParam(defaultValue = "10") Integer size) {
-        //здесь сейчас не проверяется корректность входных параметров!
         return service.adminSearchEvents(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 

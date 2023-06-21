@@ -10,6 +10,7 @@ import ru.practicum.mainsvc.event.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,8 +30,8 @@ public class EventPublicController {
                                             @RequestParam LocalDateTime rangeEnd,
                                             @RequestParam Boolean onlyAvailable,
                                             @RequestParam EventSearchSort sort,
-                                            @RequestParam(defaultValue = "0") Integer from,
-                                            @RequestParam(defaultValue = "10") Integer size,
+                                            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                            @RequestParam(defaultValue = "10") @Positive int size,
                                             HttpServletRequest request) {
         return service.publicSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request.getRemoteAddr());
     }

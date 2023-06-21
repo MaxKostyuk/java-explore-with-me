@@ -47,7 +47,6 @@ public class EventPrivateController {
     }
 
     //добавить логгирование во все контроллеры!
-    //проверить все контроллеры на наличие validated и positve для всех id!
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(@RequestBody @Valid UpdateEventUserRequest newEvent,

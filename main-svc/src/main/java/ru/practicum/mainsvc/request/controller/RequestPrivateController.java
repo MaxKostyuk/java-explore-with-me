@@ -22,7 +22,6 @@ public class RequestPrivateController {
     public List<ParticipationRequestDto> getUsersRequests(@PathVariable @Positive Long userId) {
         return service.getUsersRequests(userId);
     }
-//проверить, что все контроллеры validated
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -30,7 +29,6 @@ public class RequestPrivateController {
                                               @RequestParam @Positive Long eventId) {
         return service.addRequest(userId, eventId);
     }
-    //проверить условия из эйпиай
 
     @PatchMapping("/{requestId}/cancel")
     public ParticipationRequestDto cancelRequest(@PathVariable @Positive Long userId,
