@@ -32,10 +32,7 @@ import ru.practicum.mainsvc.user.repository.UserRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -137,8 +134,15 @@ public class EventServiceImpl implements EventService {
                         PageRequest.of(from, size, Sort.by("id")))
                 .stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
         statService.saveViews(foundEvents.stream().map(EventShortDto::getId).collect(Collectors.toList()), ip);
-        return setViews(foundEvents);
-        //пока не хватает еще соритровки
+        setViews(foundEvents);
+        if (sort != null) {
+            if (sort == EventSearchSort.EVENT_DATE) {
+                foundEvents = foundEvents.stream().sorted(Comparator.comparing(EventShortDto::getEventDate)).collect(Collectors.toList());
+            } else {
+                foundEvents = foundEvents.stream().sorted(Comparator.comparingLong(EventShortDto::getViews)).collect(Collectors.toList());
+            }
+        }
+        return foundEvents;
     }
 
     @Override
