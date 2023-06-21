@@ -168,6 +168,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventRequestStatusUpdateResult updateParticipationRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest updateRequest) {
+        if (updateRequest.getStatus() != RequestStatus.CONFIRMED || updateRequest.getStatus() != RequestStatus.REJECTED)
+            throw new ActionForbiddenException("New status must be either CONFIRMED or REJECTED");
         userRepository.getUserById(userId);
         Event event = eventRepository.getEventById(eventId);
         if (!event.getInitiator().getId().equals(userId))
