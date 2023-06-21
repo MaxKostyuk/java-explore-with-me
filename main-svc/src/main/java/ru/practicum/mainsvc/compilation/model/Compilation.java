@@ -27,7 +27,7 @@ public class Compilation {
     private List<Event> events;
     @Column(nullable = false)
     private Boolean pinned;
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     private String title;
 }
 
