@@ -26,6 +26,7 @@ import ru.practicum.mainsvc.request.enums.RequestStatus;
 import ru.practicum.mainsvc.request.mapper.RequestMapper;
 import ru.practicum.mainsvc.request.model.ParticipationRequest;
 import ru.practicum.mainsvc.request.repository.RequestRepository;
+import ru.practicum.mainsvc.stats.service.StatService;
 import ru.practicum.mainsvc.user.model.User;
 import ru.practicum.mainsvc.user.repository.UserRepository;
 
@@ -33,6 +34,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
+    private final StatService statService;
 
     @Override
     public EventFullDto addEvent(NewEventDto newEvent, Long userId) {
@@ -55,21 +58,27 @@ public class EventServiceImpl implements EventService {
         event.setLocation(LocationMapper.toLocation(newEvent.getLocation()));
         event.setCreatedOn(LocalDateTime.now());
         event.setState(EventState.PENDING);
-        //не хватает заявок и просмотров
-        return EventMapper.toEventFullDto(eventRepository.save(event));
+        EventFullDto createdEvent = EventMapper.toEventFullDto(eventRepository.save(event));
+        createdEvent.setConfirmedRequests(0);
+        createdEvent.setViews(0L);
+        return createdEvent;
     }
 
     @Override
-    public List<EventFullDto> getUsersEvents(Long userId, Integer from, Integer size) {
-        //тут не хватает количества просмотров, но они пока не реализованы и заявок
-        return eventRepository.findAllByInitiatorId(userId, PageRequest.of(from, size, Sort.by("id")))
-                .stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
+    public List<EventShortDto> getUsersEvents(Long userId, Integer from, Integer size) {
+        List<EventShortDto> foundEvents = eventRepository.findAllByInitiatorId(userId, PageRequest.of(from, size, Sort.by("id")))
+                .stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
+        return setViews(foundEvents);
     }
 
     @Override
-    public EventFullDto getEventById(Long eventId) {
-        //тоже не хватает подтвержденных заявок и просмотров
-        return EventMapper.toEventFullDto(eventRepository.getEventById(eventId));
+    public EventFullDto getEventById(Long eventId, Long userId) {
+        userRepository.getUserById(userId);
+        EventFullDto eventToReturn = EventMapper.toEventFullDto(eventRepository.getEventById(eventId));
+        if (!eventToReturn.getInitiator().getId().equals(userId))
+            throw new ActionForbiddenException("This option is available only for initiator of event");
+        eventToReturn.setViews(statService.getViews(eventId));
+        return eventToReturn;
     }
 
     @Override
@@ -82,16 +91,17 @@ public class EventServiceImpl implements EventService {
         if (Objects.nonNull(newEvent.getStateAction()))
             event.setState((newEvent.getStateAction() == UserStateAction.SEND_TO_REVIEW ?
                     EventState.PENDING : EventState.CANCELED));
-        //опять же не хватает подтвержденных заявок и просмотров
-        return EventMapper.toEventFullDto(eventRepository.save(event));
+        EventFullDto updatedEvent = EventMapper.toEventFullDto(eventRepository.save(event));
+        updatedEvent.setViews(statService.getViews(updatedEvent.getId()));
+        return updatedEvent;
     }
 
     @Override
     public List<EventFullDto> adminSearchEvents(Long[] users, EventState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         Pageable page = PageRequest.of(from, size, Sort.by("id"));
-        //добавляем подтвержденные заявки и просмотры
-        return eventRepository.searchEvents(users, states, categories, rangeStart, rangeEnd, page)
+        List<EventFullDto> foundEvents = eventRepository.searchEvents(users, states, categories, rangeStart, rangeEnd, page)
                 .stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
+        return this.setViewsFull(foundEvents);
     }
 
     @Override
@@ -113,30 +123,33 @@ public class EventServiceImpl implements EventService {
                 event.setState(EventState.CANCELED);
             }
         }
-        //опять же ставим тут данные по просмотрам и подтвержденным заявкам
-        return EventMapper.toEventFullDto(eventRepository.save(event));
+        EventFullDto updatedEvent = EventMapper.toEventFullDto(eventRepository.save(event));
+        updatedEvent.setViews(statService.getViews(updatedEvent.getId()));
+        return updatedEvent;
     }
 
     @Override
     public List<EventShortDto> publicSearch(String text, Long[] categories, Boolean paid, LocalDateTime rangeStart,
-                                            LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size) {
-        //для каждого события отправить плюс в статистику
+                                            LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size, String ip) {
         if (rangeStart == null & rangeEnd == null)
-            rangeStart = LocalDateTime.now(); //надо убедиться, что этот иммьютабл нормально подменяется, если что
-        return eventRepository.publicSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
+            rangeStart = LocalDateTime.now();
+        List<EventShortDto> foundEvents = eventRepository.publicSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                         PageRequest.of(from, size, Sort.by("id")))
                 .stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
+        statService.saveViews(foundEvents.stream().map(EventShortDto::getId).collect(Collectors.toList()), ip);
+        return setViews(foundEvents);
         //пока не хватает еще соритровки
     }
 
     @Override
-    public EventFullDto publicGetById(Long eventId) {
+    public EventFullDto publicGetById(Long eventId, String ip) {
         Event event = eventRepository.getEventById(eventId);
         if (event.getState() != EventState.PUBLISHED)
             throw new ElementNotFoundException("Event with id " + eventId + " not found");
-        //и что в статистику отправляется плюс
-        //ну и по традиции подставить views
-        return EventMapper.toEventFullDto(event);
+        EventFullDto eventToReturn = EventMapper.toEventFullDto(event);
+        statService.saveViews(eventId, ip);
+        eventToReturn.setViews(statService.getViews(eventId));
+        return eventToReturn;
     }
 
     @Override
@@ -207,5 +220,21 @@ public class EventServiceImpl implements EventService {
             event.setRequestModeration(newEvent.getRequestModeration());
         if (Objects.nonNull(newEvent.getTitle()))
             event.setTitle(newEvent.getTitle());
+    }
+
+    private List<EventShortDto> setViews(List<EventShortDto> events) {
+        Map<Long, Long> views = statService.getViews(events.stream().map(EventShortDto::getId).collect(Collectors.toList()));
+        for (EventShortDto event : events) {
+            event.setViews(views.get(event.getId()));
+        }
+        return events;
+    }
+
+    private List<EventFullDto> setViewsFull(List<EventFullDto> events) {
+        Map<Long, Long> views = statService.getViews(events.stream().map(EventFullDto::getId).collect(Collectors.toList()));
+        for (EventFullDto event : events) {
+            event.setViews(views.get(event.getId()));
+        }
+        return events;
     }
 }

@@ -9,6 +9,8 @@ import ru.practicum.statdto.StatViewDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @ComponentScan(basePackages = {"ru.practicum.statclient"})
@@ -29,9 +31,27 @@ public class StatService {
         return statViews.get(0).getHits();
     }
 
+    public Map<Long, Long> getViews(List<Long> ids) {
+        String[] uris = new String[ids.size()];
+        for (int i = 0; i < ids.size(); i++) {
+            uris[i] = URI_BASE + ids.get(i).toString();
+        }
+        List<StatViewDto> statViews = (List<StatViewDto>) client.getStats(START_TIME, LocalDateTime.now(), uris, false).getBody();
+        return statViews.stream().collect(Collectors.toMap(x -> Long.getLong(x.getUri().replace(URI_BASE, "")), StatViewDto::getHits));
+    }
+
     public void saveViews(Long eventId, String ip) {
         String uri = URI_BASE + eventId;
         StatHitDto statHitDto = new StatHitDto(null, APP_NAME, uri, ip, LocalDateTime.now());
         client.saveEndpointRequest(statHitDto);
+    }
+
+    public void saveViews(List<Long> ids, String ip) {
+        LocalDateTime time = LocalDateTime.now();
+        for (Long id : ids) {
+            String uri = URI_BASE + id;
+            StatHitDto statHitDto = new StatHitDto(null, APP_NAME, uri, ip, time);
+            client.saveEndpointRequest(statHitDto);
+        }
     }
 }
