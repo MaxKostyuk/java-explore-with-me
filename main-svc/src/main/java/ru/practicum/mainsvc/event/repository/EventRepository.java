@@ -18,8 +18,8 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
             "where (:users is null or e.initiator.id in :users) " +
             "and (:states is null or e.state in :states) " +
             "and (:categories is null or e.category.id in :categories) " +
-            "and (:rangeStart is null or e.eventDate > :rangeStart) " +
-            "and (:rangeEnd is null or e.eventDate < :rangeEnd)")
+            "and (cast(:rangeStart as java.time.LocalDateTime) is null or e.eventDate > :rangeStart) " +
+            "and (cast(:rangeEnd as java.time.LocalDateTime) is null or e.eventDate < :rangeEnd)")
     List<Event> searchEvents(List<Long> users, List<EventState> states, List<Long> categories,
                              LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
@@ -28,8 +28,8 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
             "and (:text is null or upper(e.annotation) like upper(concat('%', :text, '%')) or upper(e.description) like upper(concat('%', :text, '%')))" +
             "and (:categories is null or e.category in :categories) " +
             "and (:paid is null or e.paid = :paid) " +
-            "and (:rangeStart is null or e.eventDate > :rangeStart) " +
-            "and (:rangeEnd is null or e.eventDate < :rangeEnd) " +
+            "and (cast(:rangeStart as java.time.LocalDateTime) is null or e.eventDate > :rangeStart) " +
+            "and (cast(:rangeEnd as java.time.LocalDateTime) is null or e.eventDate < :rangeEnd) " +
             "and (:onlyAvailable is null or e.confirmedRequests < e.participantLimit)")
     List<Event> publicSearch(String text, List<Long> categories, Boolean paid,
                              LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, PageRequest id);
