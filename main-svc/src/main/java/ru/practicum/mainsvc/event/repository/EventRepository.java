@@ -15,12 +15,12 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
     List<Event> findAllByInitiatorId(Long initiator, Pageable page);
 
     @Query("select e from Event e " +
-            "where (:users is null or e.initiator in :users) " +
+            "where (:users is null or e.initiator.id in :users) " +
             "and (:states is null or e.state in :states) " +
-            "and (:categories is null or e.category in :categories) " +
+            "and (:categories is null or e.category.id in :categories) " +
             "and (:rangeStart is null or e.eventDate > :rangeStart) " +
             "and (:rangeEnd is null or e.eventDate < :rangeEnd)")
-    List<Event> searchEvents(Long[] users, EventState[] states, Long[] categories,
+    List<Event> searchEvents(List<Long> users, List<EventState> states, List<Long> categories,
                              LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
     @Query("select e from Event e " +
@@ -31,6 +31,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
             "and (:rangeStart is null or e.eventDate > :rangeStart) " +
             "and (:rangeEnd is null or e.eventDate < :rangeEnd) " +
             "and (:onlyAvailable is null or e.confirmedRequests < e.participantLimit)")
-    List<Event> publicSearch(String text, Long[] categories, Boolean paid,
+    List<Event> publicSearch(String text, List<Long> categories, Boolean paid,
                              LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, PageRequest id);
 }

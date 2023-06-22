@@ -42,6 +42,13 @@ public class CustomExceptionHandler {
         return getApiError(HttpStatus.FORBIDDEN, "For the requested operation the conditions are not met.", e);
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ApiError exceptionHandler(Exception e) {
+        return getApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server exception.", e);
+    }
+
     private ApiError getApiError(HttpStatus status, String reason, Exception e) {
         return new ApiError(status.getReasonPhrase(), reason, e.getMessage(), LocalDateTime.now());
     }

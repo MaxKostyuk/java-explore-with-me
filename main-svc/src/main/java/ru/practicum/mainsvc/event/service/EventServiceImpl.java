@@ -96,9 +96,9 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> adminSearchEvents(Long[] users, EventState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         Pageable page = PageRequest.of(from, size, Sort.by("id"));
-        List<EventFullDto> foundEvents = eventRepository.searchEvents(users, states, categories, rangeStart, rangeEnd, page)
+        List<EventFullDto> foundEvents = eventRepository.searchEvents(List.of(users), List.of(states), List.of(categories), rangeStart, rangeEnd, page)
                 .stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
-        return this.setViewsFull(foundEvents);
+        return setViewsFull(foundEvents);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class EventServiceImpl implements EventService {
                                             LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size, String ip) {
         if (rangeStart == null & rangeEnd == null)
             rangeStart = LocalDateTime.now();
-        List<EventShortDto> foundEvents = eventRepository.publicSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
+        List<EventShortDto> foundEvents = eventRepository.publicSearch(text, List.of(categories), paid, rangeStart, rangeEnd, onlyAvailable,
                         PageRequest.of(from, size, Sort.by("id")))
                 .stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
         statService.saveViews(foundEvents.stream().map(EventShortDto::getId).collect(Collectors.toList()), ip);
