@@ -20,12 +20,12 @@ public interface EventService {
 
     EventFullDto updateEvent(Long eventId, Long userId, UpdateEventUserRequest newEvent);
 
-    List<EventFullDto> adminSearchEvents(Long[] users, EventState[] states, Long[] categories,
+    List<EventFullDto> adminSearchEvents(List<Long> users, List<EventState> states, List<Long> categories,
                                          LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
 
     EventFullDto adminUpdateEvent(Long eventId, UpdateEventAdminRequest eventRequest);
 
-    List<EventShortDto> publicSearch(String text, Long[] categories, Boolean paid, LocalDateTime rangeStart,
+    List<EventShortDto> publicSearch(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
                                      LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size, String ip);
 
     EventFullDto publicGetById(Long eventId, String ip);

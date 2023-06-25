@@ -23,13 +23,13 @@ public class EventPublicController {
     private final EventService service;
 
     @GetMapping
-    public List<EventShortDto> publicSearch(@RequestParam String text,
-                                            @RequestParam Long[] categories,
-                                            @RequestParam Boolean paid,
-                                            @RequestParam LocalDateTime rangeStart,
-                                            @RequestParam LocalDateTime rangeEnd,
-                                            @RequestParam Boolean onlyAvailable,
-                                            @RequestParam EventSearchSort sort,
+    public List<EventShortDto> publicSearch(@RequestParam(required = false) String text,
+                                            @RequestParam(required = false) List<Long> categories,
+                                            @RequestParam(required = false) Boolean paid,
+                                            @RequestParam(required = false) LocalDateTime rangeStart,
+                                            @RequestParam(required = false) LocalDateTime rangeEnd,
+                                            @RequestParam(required = false) Boolean onlyAvailable,
+                                            @RequestParam(required = false) EventSearchSort sort,
                                             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                             @RequestParam(defaultValue = "10") @Positive int size,
                                             HttpServletRequest request) {
