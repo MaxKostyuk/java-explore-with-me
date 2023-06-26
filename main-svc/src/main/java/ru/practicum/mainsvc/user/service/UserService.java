@@ -6,7 +6,7 @@ import ru.practicum.mainsvc.user.dto.UserDto;
 import java.util.List;
 
 public interface UserService {
-    List<UserDto> getUsers(Long[] ids, int from, int size);
+    List<UserDto> getUsers(List<Long> ids, int from, int size);
 
     UserDto addUser(NewUserRequest userRequest);
 

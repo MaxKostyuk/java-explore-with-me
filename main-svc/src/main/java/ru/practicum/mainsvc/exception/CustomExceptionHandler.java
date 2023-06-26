@@ -3,6 +3,7 @@ package ru.practicum.mainsvc.exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,6 +41,13 @@ public class CustomExceptionHandler {
     @ResponseBody
     public ApiError actionForbiddenExceptionHandler(ActionForbiddenException e) {
         return getApiError(HttpStatus.FORBIDDEN, "For the requested operation the conditions are not met.", e);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApiError missingRequestParamHandler(MissingServletRequestParameterException e) {
+        return getApiError(HttpStatus.BAD_REQUEST, "Missing request parameter.", e);
     }
 
     @ExceptionHandler(Exception.class)

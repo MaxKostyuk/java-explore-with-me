@@ -83,7 +83,7 @@ public class EventServiceImpl implements EventService {
         userRepository.getUserById(userId);
         Event event = eventRepository.getEventById(eventId);
         if (event.getState() == EventState.PUBLISHED)
-            throw new ActionForbiddenException("Only pending or canceled events can be changed");
+            throw new DataIntegrityViolationException("Only pending or canceled events can be changed");
         updateEventFields(newEvent, event);
         if (Objects.nonNull(newEvent.getStateAction()))
             event.setState((newEvent.getStateAction() == UserStateAction.SEND_TO_REVIEW ?
@@ -111,12 +111,12 @@ public class EventServiceImpl implements EventService {
         if (eventRequest.getStateAction() != null) {
             if (eventRequest.getStateAction() == AdminStateAction.PUBLISH_EVENT) {
                 if (event.getState() != EventState.PENDING)
-                    throw new ActionForbiddenException("Only pending events may by published");
+                    throw new DataIntegrityViolationException("Only pending events may by published");
                 event.setState(EventState.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
             } else {
                 if (event.getState() == EventState.PUBLISHED)
-                    throw new ActionForbiddenException("Published events cannot be rejected");
+                    throw new DataIntegrityViolationException("Published events cannot be rejected");
                 event.setState(EventState.CANCELED);
             }
         }
@@ -130,6 +130,8 @@ public class EventServiceImpl implements EventService {
                                             LocalDateTime rangeEnd, Boolean onlyAvailable, EventSearchSort sort, Integer from, Integer size, String ip) {
         if (rangeStart == null & rangeEnd == null)
             rangeStart = LocalDateTime.now();
+        if (rangeEnd != null && rangeStart != null && !rangeEnd.isAfter(rangeStart))
+            throw new IllegalArgumentException("RangeEnd must be after rangeStart");
         List<EventShortDto> foundEvents = eventRepository.publicSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                         PageRequest.of(from, size, Sort.by("id")))
                 .stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
@@ -168,7 +170,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventRequestStatusUpdateResult updateParticipationRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest updateRequest) {
-        if (updateRequest.getStatus() != RequestStatus.CONFIRMED || updateRequest.getStatus() != RequestStatus.REJECTED)
+        if (updateRequest.getStatus() != RequestStatus.CONFIRMED && updateRequest.getStatus() != RequestStatus.REJECTED)
             throw new ActionForbiddenException("New status must be either CONFIRMED or REJECTED");
         userRepository.getUserById(userId);
         Event event = eventRepository.getEventById(eventId);
@@ -176,6 +178,8 @@ public class EventServiceImpl implements EventService {
             throw new ActionForbiddenException("Only initiator may moderate event participation requests");
         if (!event.getRequestModeration() | event.getParticipantLimit().equals(0))
             throw new ActionForbiddenException("This event need no participation request moderation");
+        if (event.getParticipantLimit().equals(event.getConfirmedRequests()) && updateRequest.getStatus() == RequestStatus.CONFIRMED)
+            throw new DataIntegrityViolationException("All slots for participants are booked already");
 
         List<ParticipationRequest> requestsToUpdate = requestRepository.findAllById(updateRequest.getRequestIds());
         List<ParticipationRequest> confirmedRequests = new ArrayList<>();

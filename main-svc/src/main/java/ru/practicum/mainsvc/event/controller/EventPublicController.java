@@ -1,11 +1,12 @@
 package ru.practicum.mainsvc.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainsvc.event.dto.EventFullDto;
-import ru.practicum.mainsvc.event.enums.EventSearchSort;
 import ru.practicum.mainsvc.event.dto.EventShortDto;
+import ru.practicum.mainsvc.event.enums.EventSearchSort;
 import ru.practicum.mainsvc.event.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -33,12 +35,15 @@ public class EventPublicController {
                                             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                             @RequestParam(defaultValue = "10") @Positive int size,
                                             HttpServletRequest request) {
+        log.info("EventPublicController - publicSearch - text = {}, categories = {}, paid = {}, rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}",
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         return service.publicSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request.getRemoteAddr());
     }
 
     @GetMapping("/{eventId}")
     public EventFullDto publicGetById(@PathVariable @Positive Long eventId,
                                       HttpServletRequest request) {
+        log.info("EventPublicController - publicGetById - eventId = {}", eventId);
         return service.publicGetById(eventId, request.getRemoteAddr());
     }
 }

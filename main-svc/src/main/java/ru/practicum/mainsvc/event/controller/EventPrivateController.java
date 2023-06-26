@@ -1,6 +1,7 @@
 package ru.practicum.mainsvc.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class EventPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto addEvent(@RequestBody @Valid NewEventDto newEvent,
                                  @PathVariable @Positive Long userId) {
+        log.info("EventPrivateController - addEvent - userId = {}, newEvent = {}", userId, newEvent);
         return service.addEvent(newEvent, userId);
     }
 
@@ -37,27 +40,30 @@ public class EventPrivateController {
     public List<EventShortDto> getUsersEvents(@PathVariable @Positive Long userId,
                                               @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
                                               @RequestParam(defaultValue = "10") @Positive Integer size) {
+        log.info("EventPrivateController - getUsersEvents - userId = {}, from = {}, size = {}", userId, from, size);
         return service.getUsersEvents(userId, from, size);
     }
 
     @GetMapping("/{eventId}")
     public EventFullDto getEvent(@PathVariable @Positive Long eventId,
                                  @PathVariable @Positive Long userId) {
+        log.info("EventPrivateController - getEvent - userId = {}, eventId = {}", userId, eventId);
         return service.getEventById(eventId, userId);
     }
 
-    //добавить логгирование во все контроллеры!
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(@RequestBody @Valid UpdateEventUserRequest newEvent,
                                     @PathVariable @Positive Long userId,
                                     @PathVariable @Positive Long eventId) {
+        log.info("EventPrivateController - updateEvent - userId = {}, eventId = {}, newEvent = {}", userId, eventId, newEvent);
         return service.updateEvent(eventId, userId, newEvent);
     }
 
     @GetMapping("/{eventId}/requests")
     public List<ParticipationRequestDto> getEventsRequests(@PathVariable @Positive Long userId,
                                                            @PathVariable @Positive Long eventId) {
+        log.info("EventPrivateController - getEventsRequests - userId = {}, eventId = {}", userId, eventId);
         return service.getEventsRequests(userId, eventId);
     }
 
@@ -65,6 +71,7 @@ public class EventPrivateController {
     public EventRequestStatusUpdateResult updateEventRequestsStatus(@PathVariable @Positive Long userId,
                                                                     @PathVariable @Positive Long eventId,
                                                                     @RequestBody @Valid EventRequestStatusUpdateRequest updateRequest) {
+        log.info("EventPrivateController - updateEventRequestsStatus - userId = {}, eventId = {}, updateRequest = {}", userId, eventId, updateRequest);
         return service.updateParticipationRequests(userId, eventId, updateRequest);
     }
 }

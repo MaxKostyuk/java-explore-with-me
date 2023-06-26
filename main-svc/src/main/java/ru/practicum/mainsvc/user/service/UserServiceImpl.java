@@ -11,7 +11,6 @@ import ru.practicum.mainsvc.user.mapper.UserMapper;
 import ru.practicum.mainsvc.user.model.User;
 import ru.practicum.mainsvc.user.repository.UserRepository;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,13 +22,13 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDto> getUsers(Long[] ids, int from, int size) {
+    public List<UserDto> getUsers(List<Long> ids, int from, int size) {
         Pageable page = PageRequest.of(from, size, Sort.by("id"));
         List<User> userList;
         if (ids == null) {
             userList = repository.findAll(page).getContent();
         } else {
-            userList = repository.findAllByIdIn(Arrays.asList(ids), page);
+            userList = repository.findAllByIdIn(ids, page);
         }
         return userList.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }

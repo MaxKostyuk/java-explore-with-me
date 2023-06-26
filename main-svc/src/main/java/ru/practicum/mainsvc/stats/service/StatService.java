@@ -27,7 +27,9 @@ public class StatService {
     public Long getViews(Long eventId) {
         String[] uris = new String[1];
         uris[0] = URI_BASE + eventId;
-        List<StatViewDto> statViews = client.getStats(START_TIME, LocalDateTime.now(), uris, false);
+        List<StatViewDto> statViews = client.getStats(START_TIME, LocalDateTime.now(), uris, true);
+        if (statViews.isEmpty())
+            return 0L;
         return statViews.get(0).getHits();
     }
 
@@ -36,7 +38,7 @@ public class StatService {
         for (int i = 0; i < ids.size(); i++) {
             uris[i] = URI_BASE + ids.get(i).toString();
         }
-        List<StatViewDto> statViews = client.getStats(START_TIME, LocalDateTime.now(), uris, false);
+        List<StatViewDto> statViews = client.getStats(START_TIME, LocalDateTime.now(), uris, true);
         return statViews.stream().collect(Collectors.toMap(x -> Long.parseLong(x.getUri().replace(URI_BASE, "")), StatViewDto::getHits));
     }
 

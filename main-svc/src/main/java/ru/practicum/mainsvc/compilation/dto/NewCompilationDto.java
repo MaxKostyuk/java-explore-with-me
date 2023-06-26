@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
@@ -13,7 +12,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 public class NewCompilationDto {
-    @NotNull
     private Set<Long> events;
     private Boolean pinned = false;
     @NotBlank
