@@ -176,7 +176,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.getEventById(eventId);
         if (!event.getInitiator().getId().equals(userId))
             throw new ActionForbiddenException("Only initiator may moderate event participation requests");
-        if (!event.getRequestModeration() | event.getParticipantLimit().equals(0))
+        if (!event.getRequestModeration() || event.getParticipantLimit().equals(0))
             throw new ActionForbiddenException("This event need no participation request moderation");
         if (event.getParticipantLimit().equals(event.getConfirmedRequests()) && updateRequest.getStatus() == RequestStatus.CONFIRMED)
             throw new DataIntegrityViolationException("All slots for participants are booked already");
