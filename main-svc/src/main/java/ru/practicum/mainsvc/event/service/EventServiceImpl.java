@@ -135,7 +135,7 @@ public class EventServiceImpl implements EventService {
         List<EventShortDto> foundEvents = eventRepository.publicSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                         PageRequest.of(from, size, Sort.by("id")))
                 .stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
-        statService.saveViews(foundEvents.stream().map(EventShortDto::getId).collect(Collectors.toList()), ip);
+        statService.saveViews(0L, ip);
         setViews(foundEvents);
         if (sort != null) {
             if (sort == EventSearchSort.EVENT_DATE) {
