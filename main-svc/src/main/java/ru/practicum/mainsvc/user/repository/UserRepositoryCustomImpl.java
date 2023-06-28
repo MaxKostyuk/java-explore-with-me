@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Lazy;
 import ru.practicum.mainsvc.exception.ElementNotFoundException;
 import ru.practicum.mainsvc.user.model.User;
 
-public class UserRepositoryCustomImpl implements UserRepositoryCustom{
+public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     private final UserRepository repository;
     private static final String USER_NOT_FOUND_TEMPLATE = "User with id %d not found";
 
