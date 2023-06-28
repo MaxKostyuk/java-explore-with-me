@@ -235,7 +235,10 @@ public class EventServiceImpl implements EventService {
     private List<EventShortDto> setViews(List<EventShortDto> events) {
         Map<Long, Long> views = statService.getViews(events.stream().map(EventShortDto::getId).collect(Collectors.toList()));
         for (EventShortDto event : events) {
-            event.setViews(views.get(event.getId()));
+            Long viewsNum = views.get(event.getId());
+            if (viewsNum == null)
+                viewsNum = 0L;
+            event.setViews(viewsNum);
         }
         return events;
     }
@@ -243,7 +246,10 @@ public class EventServiceImpl implements EventService {
     private List<EventFullDto> setViewsFull(List<EventFullDto> events) {
         Map<Long, Long> views = statService.getViews(events.stream().map(EventFullDto::getId).collect(Collectors.toList()));
         for (EventFullDto event : events) {
-            event.setViews(views.get(event.getId()));
+            Long viewsNum = views.get(event.getId());
+            if (viewsNum == null)
+                viewsNum = 0L;
+            event.setViews(viewsNum);
         }
         return events;
     }
