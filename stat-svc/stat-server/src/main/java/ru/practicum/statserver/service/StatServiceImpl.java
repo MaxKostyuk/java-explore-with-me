@@ -3,10 +3,10 @@ package ru.practicum.statserver.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.statserver.mapper.StatMapper;
-import ru.practicum.statserver.repository.StatRecordRepository;
 import ru.practicum.statdto.StatHitDto;
 import ru.practicum.statdto.StatViewDto;
+import ru.practicum.statserver.mapper.StatMapper;
+import ru.practicum.statserver.repository.StatRecordRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +25,8 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public List<StatViewDto> getStatistics(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
+        if (!start.isBefore(end))
+            throw new IllegalArgumentException("End time must be later then start time");
         Sort sort = Sort.by("hits").descending();
         if (Objects.isNull(uris)) {
             if (unique)
