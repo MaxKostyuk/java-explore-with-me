@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class StatService {
 
     private static final String APP_NAME = "ewm-main-service";
-    private static final String URI_BASE = "/event/";
+    private static final String URI_BASE = "/events/";
 
     private static final LocalDateTime START_TIME = LocalDateTime.of(2020, 1, 1, 0, 0);
 
