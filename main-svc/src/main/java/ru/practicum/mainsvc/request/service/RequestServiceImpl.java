@@ -44,7 +44,7 @@ public class RequestServiceImpl implements RequestService {
             throw new DataIntegrityViolationException("Initiator of event cannot request for participation");
         if (event.getState() != EventState.PUBLISHED)
             throw new DataIntegrityViolationException("Only published events are allowed for requests");
-        if (event.getConfirmedRequests() >= event.getParticipantLimit() & !event.getParticipantLimit().equals(0))
+        if (event.getConfirmedRequests() >= event.getParticipantLimit() && !event.getParticipantLimit().equals(0))
             throw new DataIntegrityViolationException("There are no available slots for participation");
         ParticipationRequest request = ParticipationRequest.builder()
                 .event(event)
